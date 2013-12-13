@@ -1,0 +1,34 @@
+# tcp_test.tcl
+# send tcp packet from node0 to node1
+
+
+# Example root
+mkdir drcl.comp.Component /example1
+cd /example1
+
+# Create nodes, link and connect
+mkdir drcl.inet.Node node0 
+mkdir drcl.inet.application.SApplication node0/app
+mkdir drcl.inet.transport.TCP node0/tcp
+mkdir drcl.inet.host.JSocket node0/js 
+! node0/tcp setPeer "127.0.0.1" 9418
+
+
+mkdir drcl.inet.Node node1 
+mkdir drcl.inet.application.BulkSink node1/app
+mkdir drcl.inet.transport.TCPSink node1/tcp
+mkdir drcl.inet.host.JSocket node1/js 
+! node1/js setPortOn 9417
+
+# connect components
+connect -c node0/app/down@ -and node0/tcp/0@up
+connect -c node0/tcp/down@ -and node0/js/up@
+
+connect -c node1/js/up@ -and node1/tcp/down@
+connect -c node1/tcp/up@ -and node1/app/down@
+
+# Attaches simulator runtime
+set sim [attach_simulator .]
+run .
+#send "test"
+! node0/app sendString "test"

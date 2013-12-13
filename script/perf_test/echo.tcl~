@@ -1,0 +1,7 @@
+mkdir drcl.inet.host.MobibedSocketEcho server
+mkdir drcl.inet.host.MobibedSocketEcho client
+
+! server setAsServer
+# Attaches mobibed runtime
+attach_mobibed .
+run .

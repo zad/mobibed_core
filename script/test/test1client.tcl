@@ -1,0 +1,44 @@
+# test1-client.tcl
+#
+
+
+# Example root
+mkdir drcl.comp.Component /example1
+cd /example1
+
+# Create nodes, link and connect
+mkdir drcl.inet.Node node0 
+mkdir drcl.inet.host.JavaHostUnit node0/jhu 
+mkdir drcl.inet.core.Identity node0/id 
+
+cd node0
+! jhu bind [! id]
+
+
+cd ..
+# Assign node addresses
+! node0/id add 0
+
+
+# Open up raw IP ports for injecting/receiving packets
+mkdir node0/jhu/9418@up 
+mkdir drcl.comp.io.Stdout node0/stdout
+connect -c node0/jhu/9418@up -to node0/stdout/in@
+
+
+# Simple procedure to inject data at node0/jhu/10000@up
+proc send data_ {
+	set source_ 0
+	set destination_ 1
+	set routerAlert_ false
+	set TTL_ 1
+	set ToS_ 0
+	set size_ 100
+	set packet_ [java::call drcl.inet.contract.PktSending getForwardPack $data_ $size_ $source_ $destination_ $routerAlert_ $TTL_ $ToS_]
+	inject $packet_ node0/jhu/9418@up
+}
+
+# Attaches simulator runtime
+set sim [attach_simulator .]
+run .
+send "test"

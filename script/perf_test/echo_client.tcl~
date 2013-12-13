@@ -1,0 +1,9 @@
+mkdir drcl.inet.transport.EchoCP tcp
+mkdir drcl.inet.host.SyncMobibedSocketEcho client
+
+! client connectServer "localhost" 9418
+
+connect -c tcp/down@ -and client/up@ 
+# Attaches mobibed runtime
+attach_mobibed .
+run .

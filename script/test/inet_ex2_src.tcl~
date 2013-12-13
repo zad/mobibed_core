@@ -1,0 +1,31 @@
+# inet_ex2_src.tcl
+#
+# Test inet in following topology with TCP source on
+# node h0 and sink on node h2
+# 
+
+cd [mkdir -q drcl.comp.Component /example2]
+mkdir drcl.inet.Node node0 
+mkdir drcl.inet.host.JavaHostUnit node0/jhu 
+mkdir drcl.inet.core.Identity node0/id 
+
+cd node0
+! jhu bind [! id]
+
+cd ..
+# Assign node addresses
+! node0/id add 0
+
+# setup tcp
+mkdir drcl.inet.transport.TCP node0/tcp
+! node0/tcp setMSS 512
+! node0/tcp setPeer 2
+
+mkdir drcl.inet.application.BulkSource node0/source
+! node0/source setDataUnit 512
+connect -c node0/down@ -and node0/tcp/up@
+connect -c node0/tcp/down@ -and node0/jhu/9418@up
+
+cd ..
+set sim [attach_simulator .]
+run .

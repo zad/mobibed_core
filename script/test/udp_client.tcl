@@ -1,0 +1,36 @@
+# test1-client.tcl
+#
+
+
+# Example root
+mkdir drcl.comp.Component /example1
+cd /example1
+
+# Create nodes, link and connect
+mkdir drcl.inet.Node node0 
+mkdir drcl.inet.application.SUDPApplication node0/app
+mkdir drcl.inet.transport.UDP node0/udp
+mkdir drcl.inet.host.JavaHostUnit node0/jhu 
+# mkdir drcl.inet.core.Identity node0/id 
+
+#cd node0
+#! jhu bind [! id]
+
+
+#cd ..
+# Assign node addresses
+#! node0/id add 0
+
+
+# Open up raw IP ports for injecting/receiving packets
+connect -c node0/app/down@ -to node0/udp/up@
+connect -c node0/udp/down@ -to node0/jhu/up@
+
+
+
+
+# Attaches simulator runtime
+set sim [attach_simulator .]
+#run .
+#send "test"
+! node0/app send "test" 10 "127.0.0.1" 9418
